@@ -1,2 +1,2 @@
 # OpenWrt
-Raspberry PI & OpenWrt
+Raspberry PI & Beaglebone & OpenWrt
