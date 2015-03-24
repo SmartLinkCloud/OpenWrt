@@ -1,39 +1,45 @@
-# Authpuppy
+# 2. Authpuppy
 
 
-## 2.1 Installing Apache2
-	sudo apt-get install apache2
+## 2.1 安装 Apache2
+    sudo apt-get install apache2
 
-## 2.2 Installing PHP useing src
+## 2.2 源码安装 php5
 
-### 2.2.1 Building the dependencies for PHP
-sudo apt-get build-dep php5
+### 2.2.1 安装PHP依赖包
+  sudo apt-get build-dep php5
 
-### 2.2.2 Downloading php5.5 
-http://php.net/downloads.php
+### 2.2.2 下载php5.5 
+  http://php.net/downloads.php
 
-### 2.2.3 make && sudo make install
-cd ~/Downloads/php-5.5.23
-./configure --enable-opcache --prefix=/opt/php
-make && sudo make install
+### 2.2.3 编译安装
+  cd ~/Downloads/php-5.5.23
+  ./configure --enable-opcache --prefix=/opt/php
+  make && sudo make install
 
-## 2.3 Installing MySQL
-	sudo apt-get install mysql-server mysql-client
+## 2.3 安装 MySQL
+    sudo apt-get install mysql-server mysql-client
 
-## 2.4 Installing PHPMyAdmin
-	sudo apt-get install phpmyadmin
+## 2.4 安装 PHPMyAdmin
+    sudo apt-get install phpmyadmin
 
 ## 2.5 Test
+    
+    sudo vim /etc/apache2/sites-available/000-default.conf
+
+修改/var/www/html 为 /var/www/
+
+在/var/www/目录下创建 phpinfo.php 输入
+
+    <?php
+    phpinfo();
+    ?>
+打开127.0.0.1/phpinfo.php查看返回。
 
 然后到这个网站http://www.authpuppy.org/doc/Getting_Started去下载check_configuration.php,这个文件是检测你的电脑安装authpuppy需要哪些环境，
+把check_configuration.php放到/var/www/。
 
-sudo vim /etc/apache2/sites-available/000-default.conf
-change /var/www/html to /var/www/
-
-put check_configuration.php to /var/www/
-
-and type 127.0.0.1/check_configuration.php in firefox web browser.
-
+浏览器输入127.0.0.1/check_configuration.php，返回
 下面是我配置好的环境
 
 ********************************
@@ -71,13 +77,8 @@ php.ini used by PHP: /etc/php5/apache2/php.ini
 
 #### Install APC
 APC在PHP5.4及以下版本是性能最好的代码缓存。
-
 不过PHP升级到5.5及以上后，APC不再有效。需要使用Zend的OpCache扩展。
 
 要启用Opcache扩展，有两步：
 
-#### Set short_open_tag
-
-sudo vim /opt/lampp/etc/php.ini
-Set short_open_tag to off in php.ini
 
