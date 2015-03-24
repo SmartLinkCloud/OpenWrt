@@ -43,27 +43,25 @@
 
 浏览器输入127.0.0.1/check_configuration.php，返回
 下面是我配置好的环境
-
 ********************************
 *                              *
 *  symfony requirements check  *
 *                              *
 ********************************
 
-php.ini used by PHP: /etc/php5/apache2/php.ini
+php.ini used by PHP: WARNING: not using a php.ini file
 
 
 ** Mandatory requirements **
 
-  OK        PHP version is at least 5.2.4 (5.5.9-1ubuntu4.7)
+  OK        PHP version is at least 5.2.4 (5.5.23)
 
 ** Optional checks **
 
   OK        PDO is installed
-  OK        PDO has some drivers installed: mysql
+  OK        PDO has some drivers installed: pgsql, sqlite, mysql
   OK        PHP-XML module is installed
-[[WARNING]] XSL module is installed: FAILED
-            *** Install and enable the XSL module (recommended for Propel) ***
+  OK        XSL module is installed
   OK        The token_get_all() function is available
   OK        The mb_strlen() function is available
   OK        The iconv() function is available
@@ -71,7 +69,8 @@ php.ini used by PHP: /etc/php5/apache2/php.ini
   OK        The posix_isatty() is available
 [[WARNING]] A PHP accelerator is installed: FAILED
             *** Install a PHP accelerator like APC (highly recommended) ***
-  OK        php.ini has short_open_tag set to off
+[[WARNING]] php.ini has short_open_tag set to off: FAILED
+            *** Set it to off in php.ini ***
   OK        php.ini has magic_quotes_gpc set to off
   OK        php.ini has register_globals set to off
   OK        php.ini has session.auto_start set to off
