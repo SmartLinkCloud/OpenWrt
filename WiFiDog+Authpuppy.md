@@ -1,3 +1,5 @@
+# 1.WiFiDog
+
 # 2. Authpuppy
 
 ## 2.1 安装 Apache2
@@ -75,6 +77,7 @@ php.ini used by PHP: WARNING: not using a php.ini file
   OK        php.ini has register_globals set to off
   OK        php.ini has session.auto_start set to off
   OK        PHP version is not 5.2.9
+
 
 #### Install APC
 APC在PHP5.4及以下版本是性能最好的代码缓存。
