@@ -3,7 +3,7 @@
 # 2. Authpuppy
 
 ## 2.1 安装 Apache2
-    sudo apt-get install apache2 apache2-mpm-prefork
+    sudo apt-get install apache2
 
 ## 2.2 安装 MySQL
     sudo apt-get install mysql-server mysql-client
