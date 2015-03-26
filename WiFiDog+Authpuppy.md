@@ -3,7 +3,7 @@
 # 2. Authpuppy
 
 ## 2.1 安装 Apache2
-    sudo apt-get install apache2
+    sudo apt-get install apache2 apache2-mpm-prefork
 
 ## 2.2 安装 MySQL
     sudo apt-get install mysql-server mysql-client
@@ -17,14 +17,15 @@
 ## 2.5 源码安装 php5
 
 ### 2.5.1 安装PHP依赖包
-  sudo apt-get build-dep php5
+    sudo apt-get install openssl curl libmcrypt-dev
+    sudo apt-get build-dep php5
 
 ### 2.5.2 下载php5.5 
   http://php.net/downloads.php
 
 ### 2.5.3 编译安装
   cd ~/Downloads/php-5.5.23
-  sudo ./configure --enable-opcache --prefix=/opt/php --with-apxs2=/usr/bin/apxs2 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pgsql=/usr --with-tidy=/usr --with-curl=/usr/bin --with-openssl-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-pdo-pgsql=/usr --with-pdo-mysql=mysqlnd --with-xsl=/usr --with-ldap --with-xmlrpc --with-iconv-dir=/usr --with-snmp=/usr --enable-exif --enable-calendar --with-bz2=/usr --with-mcrypt=/usr --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-freetype-dir=/usr --enable-mbstring --enable-zip --with-pear --with-libdir=/lib/x86_64-linux-gnu --with-config-file-path=/opt
+  sudo ./configure --enable-opcache --prefix=/opt/php --with-apxs2=/usr/bin/apxs2 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pgsql=/usr --with-tidy=/usr --with-curl=/usr/bin --with-openssl-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-pdo-pgsql=/usr --with-pdo-mysql=mysqlnd --with-xsl=/usr --with-ldap --with-xmlrpc --with-iconv-dir=/usr --with-snmp=/usr --enable-exif --enable-calendar --with-bz2=/usr --with-mcrypt=/usr --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-freetype-dir=/usr --enable-mbstring --enable-zip --with-pear --with-libdir=/lib/x86_64-linux-gnu --with-config-file-path=/opt/php
   
   sudo make && sudo make install
 ## 2.6 Test
