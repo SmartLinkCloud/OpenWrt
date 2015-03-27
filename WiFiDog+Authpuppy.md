@@ -81,4 +81,4 @@ php.ini used by PHP: /etc/php5/apache2/php.ini
 
 
 
-
+192.168.1.1:2060/wifidog/status
