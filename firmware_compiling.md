@@ -11,6 +11,15 @@
 
     svn checkout svn://svn.openwrt.org/openwrt/trunk
     cd trunk
+
+    svn update
+
+    cp feeds.conf.default feeds.conf
+    
+    sudo vim feeds.conf
+add:
+    src-git wifidog https://github.com/wifidog/wifidog-gateway.git
+    
     ./scripts/feeds update -a
     ./scripts/feeds install -a
 
