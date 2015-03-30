@@ -17,14 +17,16 @@
 ## 2.5 源码安装 php5
 
 ### 2.5.1 安装PHP依赖包
-  sudo apt-get build-dep php5
+    sudo apt-get install openssl curl libmcrypt-dev
+    sudo apt-get build-dep php5
+    sudo apt-get install libapache2-mod-php5 php5-mysql php5-xsl php5-dev php-apc
 
 ### 2.5.2 下载php5.5 
   http://php.net/downloads.php
 
 ### 2.5.3 编译安装
   cd ~/Downloads/php-5.5.23
-  sudo ./configure --enable-opcache --prefix=/opt/php --with-apxs2=/usr/bin/apxs2 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pgsql=/usr --with-tidy=/usr --with-curl=/usr/bin --with-openssl-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-pdo-pgsql=/usr --with-pdo-mysql=mysqlnd --with-xsl=/usr --with-ldap --with-xmlrpc --with-iconv-dir=/usr --with-snmp=/usr --enable-exif --enable-calendar --with-bz2=/usr --with-mcrypt=/usr --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-freetype-dir=/usr --enable-mbstring --enable-zip --with-pear --with-libdir=/lib/x86_64-linux-gnu --with-config-file-path=/opt
+  sudo ./configure --enable-opcache --prefix=/opt/php --with-apxs2=/usr/bin/apxs2 --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pgsql=/usr --with-tidy=/usr --with-curl=/usr/bin --with-openssl-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-pdo-pgsql=/usr --with-pdo-mysql=mysqlnd --with-xsl=/usr --with-ldap --with-xmlrpc --with-iconv-dir=/usr --with-snmp=/usr --enable-exif --enable-calendar --with-bz2=/usr --with-mcrypt=/usr --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-freetype-dir=/usr --enable-mbstring --enable-zip --with-pear --with-libdir=/lib/x86_64-linux-gnu --with-config-file-path=/opt/php
   
   sudo make && sudo make install
 ## 2.6 Test
@@ -44,24 +46,25 @@
 把check_configuration.php放到/var/www/。
 
 浏览器输入127.0.0.1/check_configuration.php，返回
-下面是我配置好的环境
+我配置好的环境
+
 ********************************
 *                              *
 *  symfony requirements check  *
 *                              *
 ********************************
 
-php.ini used by PHP: WARNING: not using a php.ini file
+php.ini used by PHP: /etc/php5/apache2/php.ini
 
 
 ** Mandatory requirements **
 
-  OK        PHP version is at least 5.2.4 (5.5.23)
+  OK        PHP version is at least 5.2.4 (5.5.9-1ubuntu4.7)
 
 ** Optional checks **
 
   OK        PDO is installed
-  OK        PDO has some drivers installed: pgsql, sqlite, mysql
+  OK        PDO has some drivers installed: mysql
   OK        PHP-XML module is installed
   OK        XSL module is installed
   OK        The token_get_all() function is available
@@ -69,20 +72,13 @@ php.ini used by PHP: WARNING: not using a php.ini file
   OK        The iconv() function is available
   OK        The utf8_decode() is available
   OK        The posix_isatty() is available
-[[WARNING]] A PHP accelerator is installed: FAILED
-            *** Install a PHP accelerator like APC (highly recommended) ***
-[[WARNING]] php.ini has short_open_tag set to off: FAILED
-            *** Set it to off in php.ini ***
+  OK        A PHP accelerator is installed
+  OK        php.ini has short_open_tag set to off
   OK        php.ini has magic_quotes_gpc set to off
   OK        php.ini has register_globals set to off
   OK        php.ini has session.auto_start set to off
   OK        PHP version is not 5.2.9
 
 
-#### Install APC
-APC在PHP5.4及以下版本是性能最好的代码缓存。
-不过PHP升级到5.5及以上后，APC不再有效。需要使用Zend的OpCache扩展。
 
-要启用Opcache扩展，有两步：
-
-
+192.168.1.1:2060/wifidog/status
