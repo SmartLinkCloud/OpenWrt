@@ -23,6 +23,9 @@ add:
     ./scripts/feeds update -a
     ./scripts/feeds install -a
 
+    make menuconfig
+    sudo make V=99
+
 # Errors
 
 e4defrag.c:201:2: error: #error fallocate64 not available!
