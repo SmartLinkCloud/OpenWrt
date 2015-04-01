@@ -23,6 +23,9 @@ add:
     ./scripts/feeds update -a
     ./scripts/feeds install -a
 
+
+dts:
+
 	/dts-v1/; 
 	 
 	/include/ "mt7620a.dtsi"  
