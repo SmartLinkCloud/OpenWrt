@@ -69,3 +69,6 @@ smbpasswd -a root
 
 /etc/init.d/samba start
 
+#6.smbclient
+smbclient //服务器地址/目录 -U 用户名％密码
+
