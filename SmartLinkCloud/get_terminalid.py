@@ -1,18 +1,20 @@
 #!/usr/bin/python
 
 import sqlite3
+import urllib
+import urllib2
 
 conn = sqlite3.connect('SmartLinkCloud.db')
-
 print "Opened database successfully";
 
-cursor = conn.execute("SELECT terminalid FROM pa_terminal")
-for row in cursor:
-    print "terminalid = ", row[0], "\n"
+curs = conn.cursor()
+curs.execute("SELECT terminalid FROM pa_terminal")
+for row in curs.fetchall():
+    print row[0]
 
-print "Operation done successfully";
-conn.close()
-
+result = conn.execute('select count(*) from pa_terminal')
+count = result.fetchone()[0]
+print "rowcount = ",count
 
 def get_local_mac_address():
     import uuid
@@ -42,3 +44,20 @@ print "local mac address is : " + get_local_mac_address()
 print "local MAC ADDRESS is : " + get_local_MAC_ADDRESS()
 print "lo ip is : " + get_ip_address('lo')
 print "eth1 ip is : " + get_ip_address('eth1')
+
+URI = "http://api1.juwan.cn/PhoneAssistantServer/template/getTerminalInfo.php?mac=" + get_local_mac_address()
+print URI
+
+if count > 0:
+    pass
+else:
+    req = urllib2.Request(URI)
+    response = urllib2.urlopen(req)
+    the_page = response.read()
+
+    print the_page
+
+print "Operation done successfully";
+conn.close()
+
+
