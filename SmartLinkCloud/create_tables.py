@@ -53,4 +53,6 @@ print "Table created pa_statistics successfully";
 conn.execute('''CREATE UNIQUE INDEX appid ON pa_apps('appid');''')
 print "UNIQUE INDEX created appid successfully";
 
+conn.commit()
+
 conn.close()
