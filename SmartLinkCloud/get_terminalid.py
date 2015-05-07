@@ -5,6 +5,8 @@ import urllib
 import urllib2
 import json
 
+##----------------------------------------------------------------------##
+
 def get_local_mac_address():
     '''get local mac address'''
     import uuid
@@ -12,11 +14,15 @@ def get_local_mac_address():
     mac = uuid.UUID(int = node).hex[-12:]
     return mac
 
+##----------------------------------------------------------------------##
+
 def get_local_MAC_ADDRESS():
     '''get local MAC ADDRESS,upper mac address with the colon'''
     MAC = get_local_mac_address().upper()
     MAC_ADRESS = ":".join([MAC[e:e+2] for e in range(0,11,2)])
     return MAC_ADRESS
+
+##----------------------------------------------------------------------##
 
 def get_ip_address(ifname):
     '''get ip_address,use it need ifname,for example :'eth1'.'''
@@ -32,11 +38,13 @@ def get_ip_address(ifname):
 
     return ip
 
+##----------------------------------------------------------------------##
+
 def get_terminal_id(dbname,mac):
     '''get terminal id from pa_terminal'''
 
-    terminal_id_prefix_uri = "http://api1.juwan.cn/PhoneAssistantServer/template/getTerminalInfo.php?mac="
-    URI = terminal_id_prefix_uri + mac
+    get_terminal_id_prefix_uri = "http://api1.juwan.cn/PhoneAssistantServer/template/getTerminalInfo.php?mac="
+    URI = get_terminal_id_prefix_uri + mac
     print URI
 
 ####################################################
@@ -81,6 +89,8 @@ def get_terminal_id(dbname,mac):
 
     curs.close()
     conn.close()
+
+##----------------------------------------------------------------------##
 
 if __name__ == '__main__':
 
