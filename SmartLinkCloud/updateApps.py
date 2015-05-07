@@ -99,36 +99,8 @@ def update_all_apps(dbname,pa_apps_fields_list,order_dicts_array):
     conn = sqlite3.connect(dbname)
     curs = conn.cursor()
 
-####################################################
-##     get terminalid from  the pa_terminal table ##
-####################################################
-
-    curs.execute("SELECT terminalid FROM pa_terminal")
-    for row in curs.fetchall():
-        print "Now, terminal id is: " + row[0]
-        terminalid = row[0]
-
-    get_apps_prefix_uri = "http://houtai.juwan.cn/PhoneAssistantServer/template/getAllApps_jwbox.php?terminalid="
-    URI = get_apps_prefix_uri + terminalid
-    print URI
-
-    req = urllib2.Request(URI)
-    response = urllib2.urlopen(req)
-    the_page = response.read()
-    #the_page = response.read().decode('unicode-escape')
-
-    print the_page
-
-    from collections import OrderedDict
-    order_dict_array = json.loads(the_page, object_pairs_hook=OrderedDict);
-    print order_dict_array
-
     for order_dicts in  order_dict_array:
         for key,value in order_dicts.items():
-            print "\n"
-            print "-"*50
-            print type(value)
-            print "\n"
             if type(value) is types.UnicodeType:
                 print 'key=',key,'，value=',value.encode('utf-8')
             else:
