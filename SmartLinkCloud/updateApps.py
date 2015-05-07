@@ -5,7 +5,6 @@ import sqlite3
 import urllib
 import urllib2
 import json
-import types
 import re
 
 
@@ -100,32 +99,29 @@ def update_all_apps(dbname,pa_apps_fields_list,json_dicts):
     conn = sqlite3.connect(dbname)
     curs = conn.cursor()
 
-    insert_lists= []
+####################################################
+##  generate the insert_lists for insert          ##
+####################################################
 
+    insert_lists= []
     for apps_info_dict in json_dicts:
         insert_list= []
-
-        for key,value in apps_info_dict.items():
-            if key in pa_apps_fields_list:
-                if type(value) is types.UnicodeType:
-                    insert_list.append(value.encode('utf-8'))
-                else:
-                    insert_list.append(value)
+        for field in pa_apps_fields_list:
+            insert_list.append(apps_info_dict[field])
         insert_lists.append(insert_list)
 
-    for app_list in insert_lists:
-        print "############################insert_list##################################"
-        for app_info in app_list:
-            print "------------------------app_info-----------------------------"
-            print app_info
 ####################################################
 ##  insert apps into  pa_apps table               ##
 ####################################################
 
-    curs.execute("INSERT INTO pa_apps VALUES (?)",(terminalid,));
+    for app_list in insert_lists:
+        print "############################insert_list##################################"
+        curs.execute("INSERT INTO pa_apps VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",tuple(app_list));
+        # for app_info in app_list:
+        #     print "------------------------app_info-----------------------------"
+        #     print app_info.encode('utf-8')
 
     conn.commit()
-
 
     curs.close()
     conn.close()
