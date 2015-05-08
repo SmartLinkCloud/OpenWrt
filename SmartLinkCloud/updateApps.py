@@ -7,10 +7,11 @@ import urllib2
 import json
 import re
 import time
+import os
 
 ##-----------------------------------------------------------------------##
 
-def get_pa_apps_fields(dbname):
+def getPaAappsFields(dbname):
     '''get fields from the pa_apps table'''
 
 ####################################################
@@ -48,7 +49,7 @@ def get_pa_apps_fields(dbname):
 ##-----------------------------------------------------------------------##
 
 
-def get_all_apps(dbname):
+def getAllApps(dbname):
     '''get all apps'''
 
 ####################################################
@@ -85,24 +86,11 @@ def get_all_apps(dbname):
     curs.close()
     conn.close()
 
-    #return order_dict_array
     return json_dicts
-##-----------------------------------------------------------------------##
 
-def update_all_apps(dbname,pa_apps_fields_list,json_dicts):
-    '''update all apps'''
+##-------------------------------------------------------------------------##
 
-####################################################
-##         connect the sqlite3 database           ##
-####################################################
-
-    conn = sqlite3.connect(dbname)
-    curs = conn.cursor()
-
-####################################################
-##  generate the insert_lists for insert          ##
-####################################################
-
+def insertList(json_dicts,pa_apps_fields_list):
     insert_lists= []
     for apps_info_dict in json_dicts:
         insert_list= []
@@ -112,6 +100,66 @@ def update_all_apps(dbname,pa_apps_fields_list,json_dicts):
 
     print "---------------------insert_lists-------------------"
     print insert_lists
+
+    return insert_lists
+
+
+##-------------------------------------------------------------------------##
+
+def fileDir(app_list):
+    '''generate file dir and basename'''
+
+    url = app_list[6]
+    print "------------------------------url-----------------------------"
+    print url
+
+    basename = os.path.basename(url)
+    print "-------------------------basename--------------------------"
+    print basename
+
+    print "---------------------os.getcwd()----------------------------"
+    print os.getcwd()
+    print os.path.abspath(os.curdir)
+
+    file_dir = os.path.join(os.getcwd(),'pa_apps',app_list[0],basename)
+    print "-------------------------fileDir----------------------------"
+    print file_dir
+
+    return file_dir
+
+##-----------------------------------------------------------------------##
+
+def downloadZip(url,file_dir):
+    '''download zip useing urllib2,supports continue transferring from breakpoint'''
+    req = urllib2.Request(url)
+    #req.add_header('Range', 'bytes=0-20')
+    # set the range, from 0byte to 19byte, 20bytes len
+    # continue transferring from breakpoint
+    res = urllib2.urlopen(req)
+
+    data = res.read()
+
+    print data
+    print '----urlib2 downloading start-----'
+    print 'len:%d'%len(data)
+
+    with open(file_dir,"wb") as downloader:
+        downloader.write(data)
+
+
+
+
+##-------------------------------------------------------------------------##
+
+def updateAllApps(dbname,insert_lists):
+    '''update all apps'''
+
+####################################################
+##         connect the sqlite3 database           ##
+####################################################
+
+    conn = sqlite3.connect(dbname)
+    curs = conn.cursor()
 
 ####################################################
 ##         return appids in pa_apps               ##
@@ -139,34 +187,30 @@ def update_all_apps(dbname,pa_apps_fields_list,json_dicts):
             print "already has this app,don't need to insert"
         else:
             curs.execute("INSERT INTO pa_apps VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",tuple(app_list));
-            print "insert new app_info into pa_apps"
-        # for app_info in app_list:
-        #     print "------------------------app_info-----------------------------"
-        #     print app_info.encode('utf-8')
+            conn.commit()
+            print "------------insert new app_info into pa_apps------------------"
 
-    conn.commit()
+####################################################
+##  download the zip using urllib2                ##
+####################################################
+
+            url = app_list[6]
+            file_dir = fileDir(app_list)
+            downloadZip(url,file_dir)
 
     curs.close()
     conn.close()
-
-# def set_default_encoding():
-#     import sys
-#
-#     print sys.getdefaultencoding()
-#
-#     reload(sys)
-#     sys.setdefaultencoding('utf-8')
-#     print sys.getdefaultencoding()
 
 ##-----------------------------------------------------------------------##
 
 if __name__ == '__main__':
 
     dbname = 'SmartLinkCloud.db'
-    #set_default_encoding()
-    pa_apps_fields_list = get_pa_apps_fields(dbname)
+    pa_apps_fields_list = getPaAappsFields(dbname)
+
     while 1:
 
-        json_dicts = get_all_apps(dbname)
-        update_all_apps(dbname,pa_apps_fields_list,json_dicts)
-        time.sleep(15)
+        json_dicts = getAllApps(dbname)
+        insert_lists = insertList(json_dicts,pa_apps_fields_list)
+        updateAllApps(dbname,insert_lists)
+        time.sleep(15*60)
