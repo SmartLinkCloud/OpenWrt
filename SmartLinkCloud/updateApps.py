@@ -6,7 +6,7 @@ import urllib
 import urllib2
 import json
 import re
-
+import time
 
 ##-----------------------------------------------------------------------##
 
@@ -76,10 +76,10 @@ def get_all_apps(dbname):
     response = urllib2.urlopen(req)
     the_page = response.read()
     #the_page = response.read().decode('unicode-escape')
-    print "---------------------------------the_page----------------------------------------------"
+    print "---------------------------------the_page----------------------------------------"
     print the_page
     json_dicts = json.loads(the_page, 'utf-8');
-    print "---------------------------------json_dicts-----------------------------------------"
+    print "---------------------------------json_dicts---------------------------------------"
     print json_dicts
 
     curs.close()
@@ -110,13 +110,36 @@ def update_all_apps(dbname,pa_apps_fields_list,json_dicts):
             insert_list.append(apps_info_dict[field])
         insert_lists.append(insert_list)
 
+    print "---------------------insert_lists-------------------"
+    print insert_lists
+
+####################################################
+##         return appids in pa_apps               ##
+####################################################
+    appid_list = []
+
+    curs.execute("SELECT appid FROM pa_apps")
+    for appid in curs.fetchall():
+        print "------------------appid-----------------",appid
+        appid_list += appid
+        #generate appid list
+    print "---------------------appid_list-------------"
+    print appid_list
+
 ####################################################
 ##  insert apps into  pa_apps table               ##
 ####################################################
 
     for app_list in insert_lists:
         print "############################insert_list##################################"
-        curs.execute("INSERT INTO pa_apps VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",tuple(app_list));
+        #judge if need to insert into pa_apps
+        #print "-----------------app_list[0]-------------------",app_list[0],app_list[0] == appid_list[0],type(app_list[0]),type(appid_list[0])
+        if int(app_list[0]) in appid_list:
+            # convert unicode to int
+            print "already has this app,don't need to insert"
+        else:
+            curs.execute("INSERT INTO pa_apps VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",tuple(app_list));
+            print "insert new app_info into pa_apps"
         # for app_info in app_list:
         #     print "------------------------app_info-----------------------------"
         #     print app_info.encode('utf-8')
@@ -142,6 +165,8 @@ if __name__ == '__main__':
     dbname = 'SmartLinkCloud.db'
     #set_default_encoding()
     pa_apps_fields_list = get_pa_apps_fields(dbname)
-    json_dicts = get_all_apps(dbname)
-    update_all_apps(dbname,pa_apps_fields_list,json_dicts)
+    while 1:
 
+        json_dicts = get_all_apps(dbname)
+        update_all_apps(dbname,pa_apps_fields_list,json_dicts)
+        time.sleep(15)
