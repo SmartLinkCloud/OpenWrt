@@ -7,7 +7,7 @@ import json
 
 ##----------------------------------------------------------------------##
 
-def get_local_mac_address():
+def getLocalMacAddress():
     '''get local mac address'''
     import uuid
     node = uuid.getnode()
@@ -16,15 +16,15 @@ def get_local_mac_address():
 
 ##----------------------------------------------------------------------##
 
-def get_local_MAC_ADDRESS():
+def getLocalMACADDRESS():
     '''get local MAC ADDRESS,upper mac address with the colon'''
-    MAC = get_local_mac_address().upper()
+    MAC = getLocalMacAddress().upper()
     MAC_ADRESS = ":".join([MAC[e:e+2] for e in range(0,11,2)])
     return MAC_ADRESS
 
 ##----------------------------------------------------------------------##
 
-def get_ip_address(ifname):
+def getIpAddress(ifname):
     '''get ip_address,use it need ifname,for example :'eth1'.'''
     import socket
     import fcntl
@@ -40,7 +40,7 @@ def get_ip_address(ifname):
 
 ##----------------------------------------------------------------------##
 
-def get_terminal_id(dbname,mac):
+def getTerminalId(dbname,mac):
     '''get terminal id from pa_terminal'''
 
     get_terminal_id_prefix_uri = "http://api1.juwan.cn/PhoneAssistantServer/template/getTerminalInfo.php?mac="
@@ -96,11 +96,11 @@ if __name__ == '__main__':
 
     dbname = 'SmartLinkCloud.db'
 
-    print "local mac address is : " + get_local_mac_address()
-    print "local MAC ADDRESS is : " + get_local_MAC_ADDRESS()
-    print "lo ip is : " + get_ip_address('lo')
-    print "eth1 ip is : " + get_ip_address('eth1')
+    print "local mac address is : " + getLocalMacAddress()
+    print "local MAC ADDRESS is : " + getLocalMACADDRESS()
+    print "lo ip is : " + getIpAddress('lo')
+    print "eth1 ip is : " + getIpAddress('eth1')
 
-    mac = get_local_mac_address()
-    get_terminal_id(dbname,mac)
+    mac = getLocalMacAddress()
+    getTerminalId(dbname,mac)
 
