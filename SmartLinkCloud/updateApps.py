@@ -8,6 +8,9 @@ import json
 import re
 import time
 import os
+import sys
+import zipfile
+import errno
 
 ##-----------------------------------------------------------------------##
 
@@ -116,12 +119,20 @@ def fileDir(app_list):
     basename = os.path.basename(url)
 
     path = os.path.join(os.getcwd(),'pa_apps',app_list[0])
-    os.makedirs(path)
+
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
+
     file_dir = os.path.join(path,basename)
     print "-------------------------fileDir----------------------------"
     print file_dir
 
-    return file_dir
+    return (url,file_dir)
 
 ##-----------------------------------------------------------------------##
 
@@ -143,6 +154,47 @@ def downloadZip(url,file_dir):
         downloader.write(data)
 
 
+##-----------------------------------------------------------------------##
+
+def unzipDir(zipfilename, unzipdirname):
+    '''unzip file'''
+
+    fullzipfilename = os.path.abspath(zipfilename)
+    fullunzipdirname = os.path.abspath(unzipdirname)
+    print "Start to unzip file %s to folder %s ..." % (zipfilename, unzipdirname)
+    #Check input ...
+    if not os.path.exists(fullzipfilename):
+        print "Dir/File %s is not exist, Press any key to quit..." % fullzipfilename
+        #inputStr = raw_input()
+        return
+    if not os.path.exists(fullunzipdirname):
+        os.mkdir(fullunzipdirname)
+    else:
+        if os.path.isfile(fullunzipdirname):
+            print "File %s is exist, are you sure to delet it first ? [Y/N]" % fullunzipdirname
+            # while 1:
+            #     inputStr = raw_input()
+            #     if inputStr == "N" or inputStr == "n":
+            #         return
+            #     else:
+            #         if inputStr == "Y" or inuptStr == "y":
+            #             os.remove(fullunzipdirname)
+            #             print "Continue to unzip files ..."
+            #             break
+
+                        #Start extract files ...
+    srcZip = zipfile.ZipFile(fullzipfilename, "r")
+    for eachfile in srcZip.namelist():
+        print "Unzip file %s ..." % eachfile
+        eachfilename = os.path.normpath(os.path.join(fullunzipdirname, eachfile))
+        eachdirname = os.path.dirname(eachfilename)
+        if not os.path.exists(eachdirname):
+            os.makedirs(eachdirname)
+        fd=open(eachfilename, "wb")
+        fd.write(srcZip.read(eachfile))
+        fd.close()
+    srcZip.close()
+    print "Unzip file succeed!"
 
 
 ##-------------------------------------------------------------------------##
@@ -178,11 +230,35 @@ def updateAllApps(dbname,insert_lists):
         print "############################insert_list##################################"
         #judge if need to insert into pa_apps
         #print "-----------------app_list[0]-------------------",app_list[0],app_list[0] == appid_list[0],type(app_list[0]),type(appid_list[0])
+
+        url,file_dir = fileDir(app_list)
+
+
         if int(app_list[0]) in appid_list:
-            # convert unicode to int
-            print "already has this app,don't need to insert"
+            print "already has this app,to compare the updatetime2"
+
+            curs.execute("SELECT updatetime2 FROM pa_apps WHERE appid = %d" % int(app_list[0]))
+            for updatetime2 in curs.fetchone():
+                print "----------------updatetime2--------------"
+                print updatetime2
+
+                #if updatetime2 == app_list[17],it's not need to download again,otherwise download from the new url
+
+                if updatetime2 == app_list[17]:
+                    curs.execute("DELETE FROM pa_apps WHERE appid = %d" % int(app_list[0]))
+                    curs.execute("INSERT INTO pa_apps VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",tuple(app_list))
+                    conn.commit()
+                else:
+                    curs.execute("DELETE FROM pa_apps WHERE appid = %d" % int(app_list[0]))
+                    curs.execute("INSERT INTO pa_apps VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",tuple(app_list))
+                    conn.commit()
+
+                    downloadZip(url,file_dir)
+                    os.system('unzip %s' % file_dir)
+                    os.system('rm -rf %s' % file_dir)
+
         else:
-            curs.execute("INSERT INTO pa_apps VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",tuple(app_list));
+            curs.execute("INSERT INTO pa_apps VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",tuple(app_list))
             conn.commit()
             print "------------insert new app_info into pa_apps------------------"
 
@@ -190,9 +266,18 @@ def updateAllApps(dbname,insert_lists):
 ##  download the zip using urllib2                ##
 ####################################################
 
-            url = app_list[6]
-            file_dir = fileDir(app_list)
+
             downloadZip(url,file_dir)
+
+####################################################
+##  unzip the zip using zipfile                   ##
+####################################################
+            print "----------------unziping------------"
+            os.system('unzip %s' % file_dir)
+            os.system('rm -rf %s' % file_dir)
+####################################################
+##  update the status to 1:success                ##
+####################################################
 
     curs.close()
     conn.close()
