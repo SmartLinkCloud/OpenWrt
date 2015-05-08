@@ -114,14 +114,10 @@ def fileDir(app_list):
     print url
 
     basename = os.path.basename(url)
-    print "-------------------------basename--------------------------"
-    print basename
 
-    print "---------------------os.getcwd()----------------------------"
-    print os.getcwd()
-    print os.path.abspath(os.curdir)
-
-    file_dir = os.path.join(os.getcwd(),'pa_apps',app_list[0],basename)
+    path = os.path.join(os.getcwd(),'pa_apps',app_list[0])
+    os.makedirs(path)
+    file_dir = os.path.join(path,basename)
     print "-------------------------fileDir----------------------------"
     print file_dir
 
@@ -143,7 +139,7 @@ def downloadZip(url,file_dir):
     print '----urlib2 downloading start-----'
     print 'len:%d'%len(data)
 
-    with open(file_dir,"wb") as downloader:
+    with open(file_dir,'wb') as downloader:
         downloader.write(data)
 
 
