@@ -4,88 +4,56 @@ import sqlite3
 import urllib
 import urllib2
 import json
-
+import time
+import os
 ##----------------------------------------------------------------------##
 
-def get_local_mac_address():
-    '''get local mac address'''
-    import uuid
-    node = uuid.getnode()
-    mac = uuid.UUID(int = node).hex[-12:]
-    return mac
+def askWIFI(dbname,):
+    '''upload terminal information to server'''
 
-##----------------------------------------------------------------------##
-
-def get_local_MAC_ADDRESS():
-    '''get local MAC ADDRESS,upper mac address with the colon'''
-    MAC = get_local_mac_address().upper()
-    MAC_ADRESS = ":".join([MAC[e:e+2] for e in range(0,11,2)])
-    return MAC_ADRESS
-
-##----------------------------------------------------------------------##
-
-def get_ip_address(ifname):
-    '''get ip_address,use it need ifname,for example :'eth1'.'''
-    import socket
-    import fcntl
-    import struct
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    ip = socket.inet_ntoa(fcntl.ioctl(
-        s.fileno(),
-        0x8915,  # SIOCGIFADDR
-        struct.pack('256s', ifname[:15])
-    )[20:24])
-
-    return ip
-
-##----------------------------------------------------------------------##
-
-def get_terminal_id(dbname,mac):
-    '''get terminal id from pa_terminal'''
-
-    get_terminal_id_prefix_uri = "http://api1.juwan.cn/PhoneAssistantServer/template/getTerminalInfo.php?mac="
-    URI = get_terminal_id_prefix_uri + mac
-    print URI
-
-####################################################
-##         connect the sqlite3 database           ##
-####################################################
+    ####################################################
+    ##         connect the sqlite3 database           ##
+    ####################################################
 
     conn = sqlite3.connect(dbname)
     curs = conn.cursor()
 
-####################################################
-##  retuen the row count of the pa_terminal table ##
-####################################################
-
-    result = curs.execute('select count(*) from pa_terminal')
-    count = result.fetchone()[0]
-    print "rowcount = ",count
-
-    if count > 0:
-        print "Already has terminalid"
-    else:
-        req = urllib2.Request(URI)
-        response = urllib2.urlopen(req)
-        the_page = response.read()
-
-        print the_page
-
-        json_data = json.loads(the_page)
-        terminalid = json_data['terminalid']
-        print "terminalid in the jsondata is : " + terminalid
-
-####################################################
-##  insert terminalid into  pa_terminal table ##
-####################################################
-
-        curs.execute("INSERT INTO pa_terminal VALUES (?)",(terminalid,));
-
-        conn.commit()
+    ####################################################
+    ##  retuen the terminalid from  pa_terminal table ##
+    ####################################################
 
     curs.execute("SELECT terminalid FROM pa_terminal")
-    for row in curs.fetchall():
-        print "Now, terminal id is: " + row[0]
+    terminalid = curs.fetchone()[0]
+
+    print "Now, terminal id is: " + terminalid
+
+    ask_wifi_prefix_uri = "http://api1.juwan.cn/PhoneAssistantServer/template/ask_wifi.php?terminalid="
+    version_str = "&version="
+
+    version_file = os.path.join(os.getcwd(),'update/version')
+
+    with open(version_file, 'r') as f:
+        firmware_version = f.read()
+    # get the version of the current firmware
+
+    URI = ask_wifi_prefix_uri + terminalid +version_str + firmware_version
+    # generate the URI to request
+    print URI
+
+    req = urllib2.Request(URI)
+    response = urllib2.urlopen(req)
+    the_page = response.read()
+
+    print the_page
+
+    json_data = json.loads(the_page)
+    code = json_data['code']
+    print "-----------code------------",code,type(code)
+
+    if code == '1':
+        print "upload terminal information successfully."
+    else:
+        print "upload terminal information unsuccessfully."
 
     curs.close()
     conn.close()
@@ -96,11 +64,9 @@ if __name__ == '__main__':
 
     dbname = 'SmartLinkCloud.db'
 
-    print "local mac address is : " + get_local_mac_address()
-    print "local MAC ADDRESS is : " + get_local_MAC_ADDRESS()
-    print "lo ip is : " + get_ip_address('lo')
-    print "eth1 ip is : " + get_ip_address('eth1')
+    while 1:
+        askWIFI(dbname)
 
-    mac = get_local_mac_address()
-    get_terminal_id(dbname,mac)
+        time.sleep(15*60)
+
 
