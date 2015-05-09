@@ -17,9 +17,9 @@ import errno
 def getPaAappsFields(dbname):
     '''get fields from the pa_apps table'''
 
-####################################################
-##         connect the sqlite3 database           ##
-####################################################
+    ####################################################
+    ##         connect the sqlite3 database           ##
+    ####################################################
 
     conn = sqlite3.connect(dbname)
     curs = conn.cursor()
@@ -55,16 +55,16 @@ def getPaAappsFields(dbname):
 def getAllApps(dbname):
     '''get all apps'''
 
-####################################################
-##         connect the sqlite3 database           ##
-####################################################
+    ####################################################
+    ##         connect the sqlite3 database           ##
+    ####################################################
 
     conn = sqlite3.connect(dbname)
     curs = conn.cursor()
 
-####################################################
-##     get terminalid from  the pa_terminal table ##
-####################################################
+    ####################################################
+    ##     get terminalid from  the pa_terminal table ##
+    ####################################################
 
     curs.execute("SELECT terminalid FROM pa_terminal")
     for row in curs.fetchall():
@@ -202,16 +202,16 @@ def unzipDir(zipfilename, unzipdirname):
 def updateAllApps(dbname,insert_lists):
     '''update all apps'''
 
-####################################################
-##         connect the sqlite3 database           ##
-####################################################
+    ####################################################
+    ##         connect the sqlite3 database           ##
+    ####################################################
 
     conn = sqlite3.connect(dbname)
     curs = conn.cursor()
 
-####################################################
-##         return appids in pa_apps               ##
-####################################################
+    ####################################################
+    ##         return appids in pa_apps               ##
+    ####################################################
     appid_list = []
 
     curs.execute("SELECT appid FROM pa_apps")
@@ -222,9 +222,9 @@ def updateAllApps(dbname,insert_lists):
     print "---------------------appid_list-------------"
     print appid_list
 
-####################################################
-##  insert apps into  pa_apps table               ##
-####################################################
+    ####################################################
+    ##  insert apps into  pa_apps table               ##
+    ####################################################
 
     for app_list in insert_lists:
         print "############################insert_list##################################"
@@ -262,22 +262,22 @@ def updateAllApps(dbname,insert_lists):
             conn.commit()
             print "------------insert new app_info into pa_apps------------------"
 
-####################################################
-##  download the zip using urllib2                ##
-####################################################
+            ####################################################
+            ##  download the zip using urllib2                ##
+            ####################################################
 
 
             downloadZip(url,file_dir)
 
-####################################################
-##  unzip the zip using zipfile                   ##
-####################################################
+            ####################################################
+            ##  unzip the zip using zipfile                   ##
+            ####################################################
             print "----------------unziping------------"
             os.system('unzip %s' % file_dir)
             os.system('rm -rf %s' % file_dir)
-####################################################
-##  update the status to 1:success                ##
-####################################################
+            ####################################################
+            ##  update the status to 1:success                ##
+            ####################################################
 
     curs.close()
     conn.close()
