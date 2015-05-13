@@ -8,8 +8,8 @@ import time
 import os
 ##----------------------------------------------------------------------##
 
-def updateFirmware(dbname):
-    '''update firmware version'''
+def updatePortalTemplate(dbname):
+    '''update portal template'''
 
     ####################################################
     ##         connect the sqlite3 database           ##
@@ -27,21 +27,19 @@ def updateFirmware(dbname):
 
     print "Now, terminal id is: " + terminalid
 
-    update_firmware_prefix_uri = "http://houtai.juwan.cn/PhoneAssistantServer/template/getUpdate_jwbox.php?terminalid="
-
-    serial_number_str = "&serial_number="
-    serial_number = "???"
-
-    version_str = "&version="
-
-    version_file = os.path.join(os.getcwd(),'update/version')
-
-    with open(version_file, 'r') as f:
-        firmware_version = f.read()
-    # get the version of the current firmware from the version_file
+    update_portal_template_prefix_uri = "http://api1.juwan.cn/PhoneAssistantServer/template/getTerminalsTemplateUpload.php?terminalid=6
 
 
-    URI = update_firmware_prefix_uri + terminalid + serial_number_str + serial_number + version_str + firmware_version
+    updatetime_str = "&updatetime="
+
+    updatetime_file = os.path.join(os.getcwd(),'update/protal_updatetime')
+
+    with open(updatetime_file, 'r') as f:
+        updatetime_version = f.read()
+    # get the version of the current updatetime of the portal template from the version_file
+
+
+    URI = update_portal_template_prefix_uri + terminalid + updatetime_str + updatetime_version
     # generate the URI to request
     print URI
 
@@ -55,7 +53,7 @@ def updateFirmware(dbname):
 
 
     ####################################################
-    ## to judge if need to update firmware            ##
+    ## to judge if need to update portal template     ##
     ####################################################
 
     code = json_data['code']
@@ -63,20 +61,22 @@ def updateFirmware(dbname):
 
     if code == 'update':
         # if returned code == update , to update firmware
-        print "firmware need to update."
-        version = json_data['version']
+        print "portal template needs to update."
+        updatetime = json_data['updatetime']
         download_url = json_data['downloadurl']
-        firmware_dir = os.path.join(os.getcwd(),'update/firmware')
-        downloader(download_url,firmware_dir)
-        # download the new firmware
-        with open(version_file, 'r') as f:
-            f.wrtie(version)
-        # write the new verison to the version_file in update
+        portal_template_dir = os.path.join(os.getcwd(),'update/portal_updatetime')
+        downloader(download_url,portal_template_dir)
+        # download the new portal template
 
-        ##---to do :install the firmware
+        os.system('unzip %s' % portal_template_dir)
+
+        with open(updatetime_file, 'r') as f:
+            f.wrtie(updatetime)
+        # write the new updatetime to the portal_updatetime in update
+
 
     else:
-        print "firmware is not need to update."
+        print "portal template is not need to update."
 
     curs.close()
     conn.close()
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     dbname = 'SmartLinkCloud.db'
 
     while 1:
-        updateFirmware(dbname)
+        updatePortalTemplate(dbname)
 
         time.sleep(24*3600)
 
