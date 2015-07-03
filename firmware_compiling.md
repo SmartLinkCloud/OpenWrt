@@ -4,7 +4,7 @@
     sudo apt-get upgrade
     sudo apt-get clean
 
-    sudo apt-get install gcc g++ binutils patch bzip2 flex bison make autoconf gettext texinfo unzip sharutils subversion libncurses5-dev ncurses-term zlib1g-dev
+    sudo apt-get install gcc g++ binutils patch bzip2 flex bison make autoconf gettext texinfo unzip sharutils subversion libncurses5-dev ncurses-term zlib1g-dev libssl
 
     mkdir openwrt
     cd openwrt
